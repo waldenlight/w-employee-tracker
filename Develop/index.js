@@ -1,6 +1,17 @@
 const inquirer = require('inquirer');
 
-const viewEmployees = function () { }
+const viewEmployees = async function () {
+    const res = await fetch('/employees', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    if (response.ok) {
+        const data = await res.json()
+        console.log(data)
+    }
+}
 
 const addEmployee = function () { }
 
@@ -61,21 +72,21 @@ const initialPrompts = function () {
             }
         ])
         .then((response) => {
-            if (response.value === 0) {
+            if (response.initial === 0) {
                 viewEmployees();
-            } else if (response.value === 1) {
+            } else if (response.initial === 1) {
                 addEmployee();
-            } else if (response.value === 2) {
+            } else if (response.initial === 2) {
                 updateEmployeeRole();
-            } else if (response.value === 3) {
+            } else if (response.initial === 3) {
                 viewAllRoles();
-            } else if (response.value === 4) {
+            } else if (response.initial === 4) {
                 addRole();
-            } else if (response.value === 5) {
+            } else if (response.initial === 5) {
                 viewAllDepartments();
-            } else if (response.value === 6) {
+            } else if (response.initial === 6) {
                 addDepartment();
-            } else if (response.value === 7) {
+            } else if (response.initial === 7) {
                 quit();
             }
         });
