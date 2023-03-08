@@ -99,7 +99,6 @@ const viewEmployees = function () {
         ]);
         initialPrompts();
     });
-
 }
 
 const addEmployee = function () {
@@ -215,7 +214,70 @@ const addEmployee = function () {
 
 const updateEmployeeRole = function () { }
 
-const viewAllRoles = function () { }
+const viewAllRoles = function () {
+    const sql = `SELECT role.id, title, department_name, salary 
+    FROM role
+    INNER JOIN department ON department.id=role.department_id`;
+
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+        console.log(rows);
+        console.table([
+            {
+                id: rows[6].id,
+                title: rows[6].title,
+                department: rows[6].department_name,
+                salary: rows[6].salary
+            },
+            {
+                id: rows[7].id,
+                title: rows[7].title,
+                department: rows[7].department_name,
+                salary: rows[7].salary
+            },
+            {
+                id: rows[0].id,
+                title: rows[0].title,
+                department: rows[0].department_name,
+                salary: rows[0].salary
+            },
+            {
+                id: rows[1].id,
+                title: rows[1].title,
+                department: rows[1].department_name,
+                salary: rows[1].salary
+            },
+            {
+                id: rows[4].id,
+                title: rows[4].title,
+                department: rows[4].department_name,
+                salary: rows[4].salary
+            },
+            {
+                id: rows[5].id,
+                title: rows[5].title,
+                department: rows[5].department_name,
+                salary: rows[5].salary
+            },
+            {
+                id: rows[2].id,
+                title: rows[2].title,
+                department: rows[2].department_name,
+                salary: rows[2].salary
+            },
+            {
+                id: rows[3].id,
+                title: rows[3].title,
+                department: rows[3].department_name,
+                salary: rows[3].salary
+            }
+        ]);
+        initialPrompts();
+    });
+}
 
 const addRole = function () { }
 
