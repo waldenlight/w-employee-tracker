@@ -462,7 +462,36 @@ const addRole = function () {
         })
 }
 
-const viewAllDepartments = function () { }
+const viewAllDepartments = function () {
+    const sql = `SELECT department.id, department_name 
+    FROM department`;
+
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+        console.table([
+            {
+                id: rows[0].id,
+                department: rows[0].department_name,
+            },
+            {
+                id: rows[1].id,
+                department: rows[1].department_name,
+            },
+            {
+                id: rows[2].id,
+                department: rows[2].department_name,
+            },
+            {
+                id: rows[3].id,
+                department: rows[3].department_name,
+            },
+        ]);
+        initialPrompts();
+    });
+}
 
 const addDepartment = function () { }
 
