@@ -1,19 +1,111 @@
+const mysql = require("mysql2");
 const inquirer = require('inquirer');
+const cTable = require('console.table');
 
-const viewEmployees = async function () {
-    const res = await fetch('/employees', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-    if (response.ok) {
-        const data = await res.json()
-        console.log(data)
+// Do the connect stuff here, no fetch, no server
+const db = mysql.createConnection(
+    {
+        host: "localhost",
+        user: "root",
+        password: "FireFocusSitez100!",
+        database: "employees_db",
     }
+);
+
+const viewEmployees = function () {
+    // const sql = `SELECT employee.id, first_name, last_name, title, department_name, salary, manager_id \
+    // FROM employee`;
+    const sql = `SELECT employee.id, first_name, last_name, manager_id, title, department_name, salary, manager_id
+    FROM employee
+    INNER JOIN role ON role.id=employee.role_id
+    INNER JOIN department ON department.id=role.department_id`;
+
+    db.query(sql, (err, rows) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+        console.table([
+            {
+                id: rows[6].id,
+                first_name: rows[6].first_name,
+                last_name: rows[6].last_name,
+                title: rows[6].title,
+                department: rows[6].department_name,
+                salary: rows[6].salary,
+                manager: rows[6].manager_id,
+            },
+            {
+                id: rows[7].id,
+                first_name: rows[7].first_name,
+                last_name: rows[7].last_name,
+                title: rows[7].title,
+                department: rows[7].department_name,
+                salary: rows[7].salary,
+                manager: rows[7].manager_id,
+            },
+            {
+                id: rows[0].id,
+                first_name: rows[0].first_name,
+                last_name: rows[0].last_name,
+                title: rows[0].title,
+                department: rows[0].department_name,
+                salary: rows[0].salary,
+                manager: rows[0].manager_id,
+            },
+            {
+                id: rows[1].id,
+                first_name: rows[1].first_name,
+                last_name: rows[1].last_name,
+                title: rows[1].title,
+                department: rows[1].department_name,
+                salary: rows[1].salary,
+                manager: rows[1].manager_id,
+            },
+            {
+                id: rows[4].id,
+                first_name: rows[4].first_name,
+                last_name: rows[4].last_name,
+                title: rows[4].title,
+                department: rows[4].department_name,
+                salary: rows[4].salary,
+                manager: rows[4].manager_id,
+            },
+            {
+                id: rows[5].id,
+                first_name: rows[5].first_name,
+                last_name: rows[5].last_name,
+                title: rows[5].title,
+                department: rows[5].department_name,
+                salary: rows[5].salary,
+                manager: rows[5].manager_id,
+            },
+            {
+                id: rows[2].id,
+                first_name: rows[2].first_name,
+                last_name: rows[2].last_name,
+                title: rows[2].title,
+                department: rows[2].department_name,
+                salary: rows[2].salary,
+                manager: rows[2].manager_id,
+            },
+            {
+                id: rows[3].id,
+                first_name: rows[3].first_name,
+                last_name: rows[3].last_name,
+                title: rows[3].title,
+                department: rows[3].department_name,
+                salary: rows[3].salary,
+                manager: rows[3].manager_id,
+            }
+        ]);
+        initialPrompts();
+    });
+
 }
 
-const addEmployee = function () { }
+const addEmployee = function () {
+}
 
 const updateEmployeeRole = function () { }
 

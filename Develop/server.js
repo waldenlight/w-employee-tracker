@@ -8,6 +8,7 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+
 // Connect to database
 const db = mysql.createConnection(
     {
@@ -18,9 +19,18 @@ const db = mysql.createConnection(
     }
 );
 
+db.connect(function (err) {
+    if (err) {
+        return console.error('error: ' + err.message);
+    }
+
+    console.log('Connected to the MySQL server.');
+});
+
+
 // Read all movies
 app.get("/employees", (req, res) => {
-    const sql = `SELECT id, first_name, last_name, title, department, salary, manager FROM employees`;
+    const sql = `SELECT id, first_name, last_name, manager_id, salary, manager FROM employees`;
 
     db.query(sql, (err, rows) => {
         if (err) {
@@ -32,6 +42,7 @@ app.get("/employees", (req, res) => {
         });
     });
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
