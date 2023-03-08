@@ -13,8 +13,6 @@ const db = mysql.createConnection(
 );
 
 const viewEmployees = function () {
-    // const sql = `SELECT employee.id, first_name, last_name, title, department_name, salary, manager_id \
-    // FROM employee`;
     const sql = `SELECT employee.id, first_name, last_name, manager_id, title, department_name, salary, manager_id
     FROM employee
     INNER JOIN role ON role.id=employee.role_id
@@ -105,6 +103,114 @@ const viewEmployees = function () {
 }
 
 const addEmployee = function () {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: "What is the employee's first name?",
+                name: 'firstName',
+            },
+            {
+                type: 'input',
+                message: "What is the employee's last name?",
+                name: 'lastName',
+            },
+            {
+                type: 'list',
+                message: "What is the emloyee's role?",
+                name: 'role',
+                choices: [
+                    {
+                        name: 'Sales Lead',
+                        value: 0,
+                    },
+                    {
+                        name: 'Salesperson',
+                        value: 1,
+                    },
+                    {
+                        name: 'Lead Engineer',
+                        value: 2,
+                    },
+                    {
+                        name: 'Software Engineer',
+                        value: 3,
+                    },
+                    {
+                        name: 'Account Manager',
+                        value: 4,
+                    },
+                    {
+                        name: 'Accountant',
+                        value: 5,
+                    },
+                    {
+                        name: 'Legal Team Lead',
+                        value: 6,
+                    },
+                    {
+                        name: 'Lawyer',
+                        value: 7,
+                    },
+                ],
+            },
+            {
+                type: 'list',
+                message: "Who is the employee's manager?",
+                name: 'manager',
+                choices: [
+                    {
+                        name: 'John Doe',
+                        value: 0,
+                    },
+                    {
+                        name: 'Mike Chan',
+                        value: 1,
+                    },
+                    {
+                        name: 'Ashley Rodriguez',
+                        value: 2,
+                    },
+                    {
+                        name: 'Kevin Tupik',
+                        value: 3,
+                    },
+                    {
+                        name: 'Kunal Singh',
+                        value: 4,
+                    },
+                    {
+                        name: 'Malia Brown',
+                        value: 5,
+                    },
+                    {
+                        name: 'Sarah Lourd',
+                        value: 6,
+                    },
+                    {
+                        name: 'Tom Allen',
+                        value: 7,
+                    },
+                    {
+                        name: 'Null',
+                        value: 8,
+                    },
+                ],
+            }
+        ])
+        .then((response) => {
+            const sql = `INSERT INTO employee(id, first_name, last_name, manager_id, role_id)\n
+            VALUES(${8}, ${response.firstName}, ${response.lastName}, ${response.manager}, ${response.role})`
+
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err)
+                    return;
+                }
+                console.log(`Added ${response.firstName} ${response.lastName} to the database`)
+                initialPrompts();
+            });
+        })
 }
 
 const updateEmployeeRole = function () { }
