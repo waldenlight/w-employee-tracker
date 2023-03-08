@@ -516,8 +516,6 @@ const addDepartment = function () {
         })
 }
 
-const quit = function () { }
-
 const initialPrompts = function () {
     inquirer.registerPrompt('list-input', require('inquirer-list-input'));
     inquirer
@@ -578,7 +576,7 @@ const initialPrompts = function () {
             } else if (response.initial === 6) {
                 addDepartment();
             } else if (response.initial === 7) {
-                quit();
+                return;
             }
         });
 }
