@@ -121,35 +121,35 @@ const addEmployee = function () {
                 choices: [
                     {
                         name: 'Sales Lead',
-                        value: 0,
+                        value: 01,
                     },
                     {
                         name: 'Salesperson',
-                        value: 1,
+                        value: 02,
                     },
                     {
                         name: 'Lead Engineer',
-                        value: 2,
+                        value: 03,
                     },
                     {
                         name: 'Software Engineer',
-                        value: 3,
+                        value: 04,
                     },
                     {
                         name: 'Account Manager',
-                        value: 4,
+                        value: 05,
                     },
                     {
                         name: 'Accountant',
-                        value: 5,
+                        value: 06,
                     },
                     {
                         name: 'Legal Team Lead',
-                        value: 6,
+                        value: 07,
                     },
                     {
                         name: 'Lawyer',
-                        value: 7,
+                        value: 08,
                     },
                 ],
             },
@@ -160,46 +160,45 @@ const addEmployee = function () {
                 choices: [
                     {
                         name: 'John Doe',
-                        value: 0,
+                        value: 01,
                     },
                     {
                         name: 'Mike Chan',
-                        value: 1,
+                        value: 02,
                     },
                     {
                         name: 'Ashley Rodriguez',
-                        value: 2,
+                        value: 03,
                     },
                     {
                         name: 'Kevin Tupik',
-                        value: 3,
+                        value: 04,
                     },
                     {
                         name: 'Kunal Singh',
-                        value: 4,
+                        value: 05,
                     },
                     {
                         name: 'Malia Brown',
-                        value: 5,
+                        value: 06,
                     },
                     {
                         name: 'Sarah Lourd',
-                        value: 6,
+                        value: 07,
                     },
                     {
                         name: 'Tom Allen',
-                        value: 7,
+                        value: 08,
                     },
                     {
-                        name: 'Null',
-                        value: 8,
+                        value: 'Null',
                     },
                 ],
             }
         ])
         .then((response) => {
             const sql = `INSERT INTO employee(id, first_name, last_name, manager_id, role_id)\n
-            VALUES(${8}, ${response.firstName}, ${response.lastName}, ${response.manager}, ${response.role})`
+            VALUES(8, ${response.firstName}, ${response.lastName}, ${response.manager}, ${response.role})`
 
             db.query(sql, (err, rows) => {
                 if (err) {
@@ -412,7 +411,56 @@ const viewAllRoles = function () {
     });
 }
 
-const addRole = function () { }
+const addRole = function () {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: "What is the name of the role?",
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: "What is the salary of the role?",
+                name: 'salary',
+            },
+            {
+                type: 'list',
+                message: "Which department does the role belong to?",
+                name: 'department',
+                choices: [
+                    {
+                        name: 'Engineering',
+                        value: 01,
+                    },
+                    {
+                        name: 'Legal',
+                        value: 02,
+                    },
+                    {
+                        name: 'Finance',
+                        value: 03,
+                    },
+                    {
+                        name: 'Sales',
+                        value: 04,
+                    },
+                ],
+            }
+        ])
+        .then((response) => {
+            const sql = `INSERT INTO role(id, title, salary, department_id) VALUES(${08}, ${response.title}, ${response.salary}, ${response.department})`
+
+            db.query(sql, (err, rows) => {
+                if (err) {
+                    console.log(err)
+                    return;
+                }
+                console.log(`Added ${response.title} to the database`)
+                initialPrompts();
+            });
+        })
+}
 
 const viewAllDepartments = function () { }
 
