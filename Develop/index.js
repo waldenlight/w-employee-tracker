@@ -87,121 +87,53 @@ const addEmployee = function () {
     });
 }
 
-const retrieveDbData = function (method) {
-    const sql = `SELECT employee.id, first_name, last_name, manager_id, title, department_name, salary, manager_id
-    FROM employee
-    INNER JOIN role ON role.id=employee.role_id
-    INNER JOIN department ON department.id=role.department_id`;
+const updateEmployeeRole = function () {
 
-    db.query(sql, (err, rows) => {
+    const sql = `SELECT employee.last_name AS value FROM employee`;
+
+    db.query(sql, (err, employees) => {
         if (err) {
-            console.log(err);
+            console.log(err)
             return;
         }
-        if (method === "Update") {
-            updateEmployeeRole(rows);
-        }
-    })
-}
 
-const updateEmployeeRole = function (data) {
+        const sql = `SELECT title AS name, id AS value FROM role`;
 
-    const employeeOne = data[6];
-    const employeeTwo = data[7];
-    const employeeThree = data[0];
-    const employeeFour = data[1];
-    const employeeFive = data[4];
-    const employeeSix = data[5];
-    const employeeSeven = data[2];
-    const employeeEight = data[3];
-
-    inquirer
-        .prompt([
-            {
-                type: 'list',
-                message: "Which employee's role do you want to update?",
-                name: 'employee',
-                choices: [
-                    {
-                        value: `${employeeOne.last_name}`,
-                    },
-                    {
-                        value: `${employeeTwo.last_name}`,
-                    },
-                    {
-                        value: `${employeeThree.last_name}`,
-                    },
-                    {
-                        value: `${employeeFour.last_name}`,
-                    },
-                    {
-                        value: `${employeeFive.last_name}`,
-                    },
-                    {
-                        value: `${employeeSix.last_name}`,
-                    },
-                    {
-                        value: `${employeeSeven.last_name}`,
-                    },
-                    {
-                        value: `${employeeEight.last_name}`,
-                    },
-                ],
-            },
-            {
-                type: 'list',
-                message: "Which role do you want to assign to the selected employee?",
-                name: 'role',
-                choices: [
-                    {
-                        name: 'Sales Lead',
-                        value: 01,
-                    },
-                    {
-                        name: 'Salesperson',
-                        value: 02,
-                    },
-                    {
-                        name: 'Lead Engineer',
-                        value: 03,
-                    },
-                    {
-                        name: 'Software Engineer',
-                        value: 04,
-                    },
-                    {
-                        name: 'Account Manager',
-                        value: 05,
-                    },
-                    {
-                        name: 'Accountant',
-                        value: 06,
-                    },
-                    {
-                        name: 'Legal Team Lead',
-                        value: 07,
-                    },
-                    {
-                        name: 'Lawyer',
-                        value: 08,
-                    },
-                ]
+        db.query(sql, (err, roles) => {
+            if (err) {
+                console.log(err)
+                return;
             }
-        ])
-        .then((response) => {
-            const sql = `UPDATE employee
-            SET role_id = '${response.role}'
-            WHERE last_name = '${response.employee}'`
 
-            db.query(sql, (err, rows) => {
-                if (err) {
-                    console.log(err)
-                    return;
-                }
-                console.log(`Updated employee's role`)
-                initialPrompts();
-            });
-        })
+            inquirer
+                .prompt([
+                    {
+                        type: 'list',
+                        message: "Which employee's role do you want to update?",
+                        name: 'employee',
+                        choices: employees,
+                    },
+                    {
+                        type: 'list',
+                        message: "Which role do you want to assign to the selected employee?",
+                        name: 'role',
+                        choices: roles
+                    }
+                ])
+                .then((response) => {
+                    const sql = `UPDATE employee SET role_id = '${response.role}' WHERE last_name = '${response.employee}'`
+
+                    db.query(sql, (err, rows) => {
+                        if (err) {
+                            console.log(err)
+                            return;
+                        }
+                        console.log(`Updated employee's role`)
+                        initialPrompts();
+                    });
+                })
+        });
+    });
 }
 
 const viewAllRoles = function () {
@@ -350,7 +282,7 @@ const initialPrompts = function () {
             } else if (response.initial === 1) {
                 addEmployee();
             } else if (response.initial === 2) {
-                retrieveDbData("Update");
+                updateEmployeeRole();
             } else if (response.initial === 3) {
                 viewAllRoles();
             } else if (response.initial === 4) {
