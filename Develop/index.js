@@ -2,7 +2,6 @@ const mysql = require("mysql2");
 const inquirer = require('inquirer');
 const cTable = require('console.table');
 
-// Do the connect stuff here, no fetch, no server
 const db = mysql.createConnection(
     {
         host: "localhost",
@@ -13,9 +12,11 @@ const db = mysql.createConnection(
 );
 
 const viewEmployees = function () {
-    const sql = `SELECT employee.id, first_name, last_name, manager_id, title, department_name, salary, manager_id
-    FROM employee
-    INNER JOIN role ON role.id=employee.role_id
+    const sql = `SELECT e.id, e.first_name, e.last_name,
+    e.manager_id, role.title, department.department_name, role.salary, m.first_name AS manager_name
+    FROM employee e
+    LEFT JOIN employee m ON e.manager_id=m.id
+    INNER JOIN role ON role.id=e.role_id
     INNER JOIN department ON department.id=role.department_id`;
 
     db.query(sql, (err, rows) => {
@@ -23,80 +24,7 @@ const viewEmployees = function () {
             console.log(err)
             return;
         }
-        console.table([
-            {
-                id: rows[6].id,
-                first_name: rows[6].first_name,
-                last_name: rows[6].last_name,
-                title: rows[6].title,
-                department: rows[6].department_name,
-                salary: rows[6].salary,
-                manager: rows[6].manager_id,
-            },
-            {
-                id: rows[7].id,
-                first_name: rows[7].first_name,
-                last_name: rows[7].last_name,
-                title: rows[7].title,
-                department: rows[7].department_name,
-                salary: rows[7].salary,
-                manager: rows[7].manager_id,
-            },
-            {
-                id: rows[0].id,
-                first_name: rows[0].first_name,
-                last_name: rows[0].last_name,
-                title: rows[0].title,
-                department: rows[0].department_name,
-                salary: rows[0].salary,
-                manager: rows[0].manager_id,
-            },
-            {
-                id: rows[1].id,
-                first_name: rows[1].first_name,
-                last_name: rows[1].last_name,
-                title: rows[1].title,
-                department: rows[1].department_name,
-                salary: rows[1].salary,
-                manager: rows[1].manager_id,
-            },
-            {
-                id: rows[4].id,
-                first_name: rows[4].first_name,
-                last_name: rows[4].last_name,
-                title: rows[4].title,
-                department: rows[4].department_name,
-                salary: rows[4].salary,
-                manager: rows[4].manager_id,
-            },
-            {
-                id: rows[5].id,
-                first_name: rows[5].first_name,
-                last_name: rows[5].last_name,
-                title: rows[5].title,
-                department: rows[5].department_name,
-                salary: rows[5].salary,
-                manager: rows[5].manager_id,
-            },
-            {
-                id: rows[2].id,
-                first_name: rows[2].first_name,
-                last_name: rows[2].last_name,
-                title: rows[2].title,
-                department: rows[2].department_name,
-                salary: rows[2].salary,
-                manager: rows[2].manager_id,
-            },
-            {
-                id: rows[3].id,
-                first_name: rows[3].first_name,
-                last_name: rows[3].last_name,
-                title: rows[3].title,
-                department: rows[3].department_name,
-                salary: rows[3].salary,
-                manager: rows[3].manager_id,
-            }
-        ]);
+        console.table(rows);
         initialPrompts();
     });
 }
@@ -113,45 +41,6 @@ const addEmployee = function () {
                 type: 'input',
                 message: "What is the employee's last name?",
                 name: 'lastName',
-            },
-            {
-                type: 'list',
-                message: "What is the emloyee's role?",
-                name: 'role',
-                choices: [
-                    {
-                        name: 'Sales Lead',
-                        value: 01,
-                    },
-                    {
-                        name: 'Salesperson',
-                        value: 02,
-                    },
-                    {
-                        name: 'Lead Engineer',
-                        value: 03,
-                    },
-                    {
-                        name: 'Software Engineer',
-                        value: 04,
-                    },
-                    {
-                        name: 'Account Manager',
-                        value: 05,
-                    },
-                    {
-                        name: 'Accountant',
-                        value: 06,
-                    },
-                    {
-                        name: 'Legal Team Lead',
-                        value: 07,
-                    },
-                    {
-                        name: 'Lawyer',
-                        value: 08,
-                    },
-                ],
             },
             {
                 type: 'list',
@@ -194,11 +83,68 @@ const addEmployee = function () {
                         value: 'Null',
                     },
                 ],
+            },
+            {
+                type: 'list',
+                message: "What is the emloyee's role?",
+                name: 'role',
+                choices: [
+                    {
+                        name: 'Sales Lead',
+                        value: 01,
+                    },
+                    {
+                        name: 'Salesperson',
+                        value: 02,
+                    },
+                    {
+                        name: 'Lead Engineer',
+                        value: 03,
+                    },
+                    {
+                        name: 'Software Engineer',
+                        value: 04,
+                    },
+                    {
+                        name: 'Account Manager',
+                        value: 05,
+                    },
+                    {
+                        name: 'Accountant',
+                        value: 06,
+                    },
+                    {
+                        name: 'Legal Team Lead',
+                        value: 07,
+                    },
+                    {
+                        name: 'Lawyer',
+                        value: 08,
+                    },
+                ],
             }
         ])
         .then((response) => {
+            // const countSQL = `SELECT id FROM employee`;
+
+            // let employeeCount = 0;
+
+            // db.query(countSQL, (err, rows) => {
+            //     if (err) {
+            //         console.log(err);
+            //         return;
+            //     }
+            //     for (let i = 0; i < rows.length; i++) {
+            //         employeeCount += 1;
+            //     }
+            //     console.log(employeeCount);
+            // })
+
+            // console.log(employeeCount);
+            // const newId = employeeCount + 1;
+
             const sql = `INSERT INTO employee(id, first_name, last_name, manager_id, role_id)\n
-            VALUES(8, ${response.firstName}, ${response.lastName}, ${response.manager}, ${response.role})`
+                VALUES(09, '${response.firstName}', '${response.lastName}', 0${response.manager}, 0${response.role})`
 
             db.query(sql, (err, rows) => {
                 if (err) {
@@ -224,24 +170,6 @@ const retrieveDbData = function (method) {
         }
         if (method === "Update") {
             updateEmployeeRole(rows);
-        }
-    })
-}
-
-const findTitleId = function (title) {
-    const sql = `SELECT title, id FROM role`;
-
-    db.query(sql, (err, rows) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        for (let i = 0; i < rows.length; i++) {
-            const currentRole = rows[i];
-            if (currentRole.title === title) {
-                const roleId = currentRole.id
-                return roleId;
-            }
         }
     })
 }
@@ -356,57 +284,7 @@ const viewAllRoles = function () {
             console.log(err)
             return;
         }
-        console.log(rows);
-        console.table([
-            {
-                id: rows[6].id,
-                title: rows[6].title,
-                department: rows[6].department_name,
-                salary: rows[6].salary
-            },
-            {
-                id: rows[7].id,
-                title: rows[7].title,
-                department: rows[7].department_name,
-                salary: rows[7].salary
-            },
-            {
-                id: rows[0].id,
-                title: rows[0].title,
-                department: rows[0].department_name,
-                salary: rows[0].salary
-            },
-            {
-                id: rows[1].id,
-                title: rows[1].title,
-                department: rows[1].department_name,
-                salary: rows[1].salary
-            },
-            {
-                id: rows[4].id,
-                title: rows[4].title,
-                department: rows[4].department_name,
-                salary: rows[4].salary
-            },
-            {
-                id: rows[5].id,
-                title: rows[5].title,
-                department: rows[5].department_name,
-                salary: rows[5].salary
-            },
-            {
-                id: rows[2].id,
-                title: rows[2].title,
-                department: rows[2].department_name,
-                salary: rows[2].salary
-            },
-            {
-                id: rows[3].id,
-                title: rows[3].title,
-                department: rows[3].department_name,
-                salary: rows[3].salary
-            }
-        ]);
+        console.table(rows);
         initialPrompts();
     });
 }
@@ -449,7 +327,8 @@ const addRole = function () {
             }
         ])
         .then((response) => {
-            const sql = `INSERT INTO role(id, title, salary, department_id) VALUES(${08}, ${response.title}, ${response.salary}, ${response.department})`
+            const sql = `INSERT INTO role(id, title, salary, department_id)\n
+            VALUES(09, '${response.title}', '${response.salary}', ${response.department})`
 
             db.query(sql, (err, rows) => {
                 if (err) {
@@ -471,24 +350,7 @@ const viewAllDepartments = function () {
             console.log(err)
             return;
         }
-        console.table([
-            {
-                id: rows[0].id,
-                department: rows[0].department_name,
-            },
-            {
-                id: rows[1].id,
-                department: rows[1].department_name,
-            },
-            {
-                id: rows[2].id,
-                department: rows[2].department_name,
-            },
-            {
-                id: rows[3].id,
-                department: rows[3].department_name,
-            },
-        ]);
+        console.table(rows);
         initialPrompts();
     });
 }
@@ -503,7 +365,7 @@ const addDepartment = function () {
             }
         ])
         .then((response) => {
-            const sql = `INSERT INTO department(id, department_name) VALUES(${08}, ${response.name})`
+            const sql = `INSERT INTO department(id, department_name) VALUES(09, '${response.name}')`
 
             db.query(sql, (err, rows) => {
                 if (err) {
