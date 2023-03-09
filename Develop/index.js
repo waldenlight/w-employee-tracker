@@ -30,131 +30,61 @@ const viewEmployees = function () {
 }
 
 const addEmployee = function () {
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: "What is the employee's first name?",
-                name: 'firstName',
-            },
-            {
-                type: 'input',
-                message: "What is the employee's last name?",
-                name: 'lastName',
-            },
-            {
-                type: 'list',
-                message: "Who is the employee's manager?",
-                name: 'manager',
-                choices: [
-                    {
-                        name: 'John Doe',
-                        value: 01,
-                    },
-                    {
-                        name: 'Mike Chan',
-                        value: 02,
-                    },
-                    {
-                        name: 'Ashley Rodriguez',
-                        value: 03,
-                    },
-                    {
-                        name: 'Kevin Tupik',
-                        value: 04,
-                    },
-                    {
-                        name: 'Kunal Singh',
-                        value: 05,
-                    },
-                    {
-                        name: 'Malia Brown',
-                        value: 06,
-                    },
-                    {
-                        name: 'Sarah Lourd',
-                        value: 07,
-                    },
-                    {
-                        name: 'Tom Allen',
-                        value: 08,
-                    },
-                    {
-                        value: 'Null',
-                    },
-                ],
-            },
-            {
-                type: 'list',
-                message: "What is the emloyee's role?",
-                name: 'role',
-                choices: [
-                    {
-                        name: 'Sales Lead',
-                        value: 01,
-                    },
-                    {
-                        name: 'Salesperson',
-                        value: 02,
-                    },
-                    {
-                        name: 'Lead Engineer',
-                        value: 03,
-                    },
-                    {
-                        name: 'Software Engineer',
-                        value: 04,
-                    },
-                    {
-                        name: 'Account Manager',
-                        value: 05,
-                    },
-                    {
-                        name: 'Accountant',
-                        value: 06,
-                    },
-                    {
-                        name: 'Legal Team Lead',
-                        value: 07,
-                    },
-                    {
-                        name: 'Lawyer',
-                        value: 08,
-                    },
-                ],
+    const sql = `SELECT employee.first_name AS name, employee.id AS value FROM employee`;
+
+    db.query(sql, (err, managers) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+        const sql = `SELECT role.title AS name, role.id AS value FROM role`;
+
+        db.query(sql, (err, roles) => {
+            if (err) {
+                console.log(err)
+                return;
             }
-        ])
-        .then((response) => {
-            // const countSQL = `SELECT id FROM employee`;
 
-            // let employeeCount = 0;
+            inquirer
+                .prompt([
+                    {
+                        type: 'input',
+                        message: "What is the employee's first name?",
+                        name: 'firstName',
+                    },
+                    {
+                        type: 'input',
+                        message: "What is the employee's last name?",
+                        name: 'lastName',
+                    },
+                    {
+                        type: 'list',
+                        message: "Who is the employee's manager?",
+                        name: 'manager',
+                        choices: managers,
+                    },
+                    {
+                        type: 'list',
+                        message: "What is the emloyee's role?",
+                        name: 'role',
+                        choices: roles,
+                    }
+                ])
+                .then((response) => {
+                    const sql = `INSERT INTO employee(first_name, last_name, manager_id, role_id)\n
+                VALUES('${response.firstName}', '${response.lastName}', 0${response.manager}, 0${response.role})`
 
-            // db.query(countSQL, (err, rows) => {
-            //     if (err) {
-            //         console.log(err);
-            //         return;
-            //     }
-            //     for (let i = 0; i < rows.length; i++) {
-            //         employeeCount += 1;
-            //     }
-            //     console.log(employeeCount);
-            // })
-
-            // console.log(employeeCount);
-            // const newId = employeeCount + 1;
-
-            const sql = `INSERT INTO employee(id, first_name, last_name, manager_id, role_id)\n
-                VALUES(09, '${response.firstName}', '${response.lastName}', 0${response.manager}, 0${response.role})`
-
-            db.query(sql, (err, rows) => {
-                if (err) {
-                    console.log(err)
-                    return;
-                }
-                console.log(`Added ${response.firstName} ${response.lastName} to the database`)
-                initialPrompts();
-            });
-        })
+                    db.query(sql, (err, rows) => {
+                        if (err) {
+                            console.log(err)
+                            return;
+                        }
+                        console.log(`Added ${response.firstName} ${response.lastName} to the database`)
+                        initialPrompts();
+                    });
+                })
+        });
+    });
 }
 
 const retrieveDbData = function (method) {
@@ -290,55 +220,47 @@ const viewAllRoles = function () {
 }
 
 const addRole = function () {
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                message: "What is the name of the role?",
-                name: 'title',
-            },
-            {
-                type: 'input',
-                message: "What is the salary of the role?",
-                name: 'salary',
-            },
-            {
-                type: 'list',
-                message: "Which department does the role belong to?",
-                name: 'department',
-                choices: [
-                    {
-                        name: 'Engineering',
-                        value: 01,
-                    },
-                    {
-                        name: 'Legal',
-                        value: 02,
-                    },
-                    {
-                        name: 'Finance',
-                        value: 03,
-                    },
-                    {
-                        name: 'Sales',
-                        value: 04,
-                    },
-                ],
-            }
-        ])
-        .then((response) => {
-            const sql = `INSERT INTO role(id, title, salary, department_id)\n
-            VALUES(09, '${response.title}', '${response.salary}', ${response.department})`
+    const sql = `SELECT department.department_name AS name, department.id AS value FROM department`;
 
-            db.query(sql, (err, rows) => {
-                if (err) {
-                    console.log(err)
-                    return;
+    db.query(sql, (err, departments) => {
+        if (err) {
+            console.log(err)
+            return;
+        }
+
+        inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    message: "What is the name of the role?",
+                    name: 'title',
+                },
+                {
+                    type: 'input',
+                    message: "What is the salary of the role?",
+                    name: 'salary',
+                },
+                {
+                    type: 'list',
+                    message: "Which department does the role belong to?",
+                    name: 'department',
+                    choices: departments,
                 }
-                console.log(`Added ${response.title} to the database`)
-                initialPrompts();
-            });
-        })
+            ])
+            .then((response) => {
+                const sql = `INSERT INTO role(title, salary, department_id)\n
+            VALUES('${response.title}', '${response.salary}', ${response.department})`
+
+                db.query(sql, (err, rows) => {
+                    if (err) {
+                        console.log(err)
+                        return;
+                    }
+                    console.log(`Added ${response.title} to the database`)
+                    initialPrompts();
+                });
+            })
+    });
 }
 
 const viewAllDepartments = function () {
@@ -365,7 +287,7 @@ const addDepartment = function () {
             }
         ])
         .then((response) => {
-            const sql = `INSERT INTO department(id, department_name) VALUES(09, '${response.name}')`
+            const sql = `INSERT INTO department(department_name) VALUES('${response.name}')`
 
             db.query(sql, (err, rows) => {
                 if (err) {
