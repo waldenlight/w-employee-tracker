@@ -23,7 +23,7 @@ A CLI application linked to a SQL database. Keeps track of employees in a compan
 ## Installation
 Clone the repo and make sure you have the necessary npm packages installed (mysql2, inquirer, etc.).
 ## Usage
-Open the terminal within the develop folder. Enter the mysql shell, run the schema.sql then the seeds file. You can now navigate out of the mysql shell and run index.js. You will then see the application interface which is linked to a mysql database.
+[Demo Video.](https://drive.google.com/file/d/1yBHMQfcUogezb8pmE_tNupWyAlCDIZzs/view) Open the terminal within the develop folder. Enter the mysql shell, run the schema.sql then the seeds file. You can now navigate out of the mysql shell and run index.js. You will then see the application interface which is linked to a mysql database.
 ## Credits
 N/A
 ## License
