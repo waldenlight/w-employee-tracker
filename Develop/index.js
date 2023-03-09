@@ -13,7 +13,7 @@ const db = mysql.createConnection(
 
 const viewEmployees = function () {
     const sql = `SELECT e.id, e.first_name, e.last_name,
-    e.manager_id, role.title, department.department_name, role.salary, m.first_name AS manager_name
+    e.manager_id, role.title, department.department_name AS department, role.salary, m.last_name AS manager
     FROM employee e
     LEFT JOIN employee m ON e.manager_id=m.id
     INNER JOIN role ON role.id=e.role_id
@@ -30,7 +30,7 @@ const viewEmployees = function () {
 }
 
 const addEmployee = function () {
-    const sql = `SELECT employee.first_name AS name, employee.id AS value FROM employee`;
+    const sql = `SELECT employee.last_name AS name, employee.id AS value FROM employee`;
 
     db.query(sql, (err, managers) => {
         if (err) {
@@ -59,15 +59,15 @@ const addEmployee = function () {
                     },
                     {
                         type: 'list',
-                        message: "Who is the employee's manager?",
-                        name: 'manager',
-                        choices: managers,
-                    },
-                    {
-                        type: 'list',
                         message: "What is the emloyee's role?",
                         name: 'role',
                         choices: roles,
+                    },
+                    {
+                        type: 'list',
+                        message: "Who is the employee's manager?",
+                        name: 'manager',
+                        choices: managers,
                     }
                 ])
                 .then((response) => {
@@ -137,7 +137,7 @@ const updateEmployeeRole = function () {
 }
 
 const viewAllRoles = function () {
-    const sql = `SELECT role.id, title, department_name, salary 
+    const sql = `SELECT role.id, title, department_name AS department, salary 
     FROM role
     INNER JOIN department ON department.id=role.department_id`;
 
@@ -196,7 +196,7 @@ const addRole = function () {
 }
 
 const viewAllDepartments = function () {
-    const sql = `SELECT department.id, department_name 
+    const sql = `SELECT department.id, department_name AS department
     FROM department`;
 
     db.query(sql, (err, rows) => {
